@@ -1,41 +1,57 @@
+require 'digest'
+
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
 
-  # GET /users
-  def index
-    @users = User.all
-
-    render json: @users
-  end
-
-  # GET /users/1
-  def show
-    render json: @user
-  end
-
   # POST /users
   def create
-    @user = User.new(user_params)
+    if params[:task] == "1" # Login
+      password = password_hash(params[:password])
+      @user = User.select(:id, :name, :email, :image, :twitter, :instagram, :description).where(email: params[:email], password: password)
+      
+      if @user.empty?
+        return {"sucess": 0}
+      else
+        @user = @user[0]
 
-    if @user.save
-      render json: @user, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+        @user_adress = UserAdress.joins(:user, :state, :city).select(:user_id, :id, :state_id, :city_id, :city, :state).where(user_id: @user["id"].to_s)
+        @user_adress = @user_adress[0]
+
+
+        json_tmp = {address_id: @user_adress["id"], sucess: 1, user_id: @user["id"], name: @user["name"], email: @user["email"], image: @user["image"], twitter: @user["twitter"], instagram: @user["instagram"], description: @user["description"],
+          state: @user_adress["state"], state_id: @user_adress["state_id"], city_id: @user_adress["city_id"], city: @user_adress["city"]}
+
+        render json: json_tmp
+      end
+
+    elsif params[:task] == "2" # verifica se o email existe
+      if (User.exists?(:email => params[:email]))
+        render json: {exists: 1}
+      else
+        render json: {exists: 0}
+      end
+
+    else # Criação de usuário
+      params_tmp = user_params
+      params_tmp[:password] = password_hash(params_tmp[:password])
+
+      @user = User.new(params_tmp)
+
+      if @user.save
+        render json: {"id": @user[:id], "sucess": 1}
+      else
+        render json: {"sucess": 0}
+      end
     end
   end
 
   # PATCH/PUT /users/1
   def update
     if @user.update(user_params)
-      render json: @user
+      render json: {"sucess": 1}
     else
-      render json: @user.errors, status: :unprocessable_entity
+      render json: {"sucess": 0}
     end
-  end
-
-  # DELETE /users/1
-  def destroy
-    @user.destroy
   end
 
   private
@@ -47,5 +63,9 @@ class UsersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def user_params
       params.require(:user).permit(:name, :email, :image, :twitter, :instagram, :description, :password)
+    end
+
+    def password_hash(password)
+      hash = Digest::SHA256.hexdigest(password + "Vapo")
     end
 end

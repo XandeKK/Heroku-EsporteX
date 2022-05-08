@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   resources :participations
+  resources :info_profile
+  resources :info_game
+  resources :game_user
   resources :games
   resources :sports
   resources :user_addresses

@@ -12,6 +12,9 @@ gem "mysql2", "~> 0.5"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
 
+# A library for generating fake data such as names, addresses, and phone numbers.
+gem 'faker'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 

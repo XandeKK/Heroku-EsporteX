@@ -3,7 +3,9 @@ class GamesController < ApplicationController
 
   # GET /games
   def index
-    @games = Game.all
+    time = Time.new
+    time = time.year.to_s + "-" + time.month.to_s + "-" + time.day.to_s
+    @games = Game.joins(:user, :sport).select(:id, :user_id, :sport_id, :start, :end, :date, :address, :name, :sport).where(sport_id: params[:sport_id]).where("date >= ?", time)
 
     render json: @games
   end
@@ -26,6 +28,7 @@ class GamesController < ApplicationController
 
   # PATCH/PUT /games/1
   def update
+    @game = Game.where(id: params[:id])
     if @game.update(game_params)
       render json: @game
     else
@@ -35,13 +38,17 @@ class GamesController < ApplicationController
 
   # DELETE /games/1
   def destroy
-    @game.destroy
+    @game = Game.where(id: params[:id])
+    @game.destroy(params[:id])
+    render json: {"sucess": 1}
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
-      @game = Game.find(params[:id])
+      time = Time.new
+      time = time.year.to_s + "-" + time.month.to_s + "-" + time.day.to_s
+      @game = Game.joins(:user, :sport).select(:id, :user_id, :sport_id, :start, :end, :date, :address, :name, :sport).where(sport_id: params[:sport_id], state_id: params[:state_id], city_id: params[:city_id]).where.not(user_id: params[:user_id]).where("date >= ?", time)
     end
 
     # Only allow a list of trusted parameters through.

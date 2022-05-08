@@ -1,18 +1,6 @@
 class UserAddressesController < ApplicationController
   before_action :set_user_address, only: %i[ show update destroy ]
 
-  # GET /user_addresses
-  def index
-    @user_addresses = UserAddress.all
-
-    render json: @user_addresses
-  end
-
-  # GET /user_addresses/1
-  def show
-    render json: @user_address
-  end
-
   # POST /user_addresses
   def create
     @user_address = UserAddress.new(user_address_params)
@@ -31,11 +19,6 @@ class UserAddressesController < ApplicationController
     else
       render json: @user_address.errors, status: :unprocessable_entity
     end
-  end
-
-  # DELETE /user_addresses/1
-  def destroy
-    @user_address.destroy
   end
 
   private
