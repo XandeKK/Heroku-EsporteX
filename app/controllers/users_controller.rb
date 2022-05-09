@@ -14,12 +14,12 @@ class UsersController < ApplicationController
       else
         @user = @user[0]
 
-        @user_adress = UserAdress.joins(:user, :state, :city).select(:user_id, :id, :state_id, :city_id, :city, :state).where(user_id: @user["id"].to_s)
-        @user_adress = @user_adress[0]
+        @user_address = UserAddress.joins(:user, :state, :city).select(:user_id, :id, :state_id, :city_id, :city, :state).where(user_id: @user["id"].to_s)
+        @user_address = @user_address[0]
 
 
-        json_tmp = {address_id: @user_adress["id"], sucess: 1, user_id: @user["id"], name: @user["name"], email: @user["email"], image: @user["image"], twitter: @user["twitter"], instagram: @user["instagram"], description: @user["description"],
-          state: @user_adress["state"], state_id: @user_adress["state_id"], city_id: @user_adress["city_id"], city: @user_adress["city"]}
+        json_tmp = {address_id: @user_address["id"], sucess: 1, user_id: @user["id"], name: @user["name"], email: @user["email"], image: @user["image"], twitter: @user["twitter"], instagram: @user["instagram"], description: @user["description"],
+          state: @user_address["state"], state_id: @user_address["state_id"], city_id: @user_address["city_id"], city: @user_address["city"]}
 
         render json: json_tmp
       end
