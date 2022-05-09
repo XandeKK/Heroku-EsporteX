@@ -26,7 +26,7 @@ end
 user = User.all
 
 for i in 0..4
-	UserAdress.create!(user_id: user[i % 5]["id"], state_id: state_id: state[i % 4]["id"], city_id: city[i % 6]["id"])
+	UserAdress.create!(user_id: user[i % 5]["id"], state_id: state[i % 4]["id"], city_id: city[i % 6]["id"])
 end
 
 for i in 1..20
